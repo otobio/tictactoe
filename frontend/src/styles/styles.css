@@ -30,3 +30,15 @@ body {
 	border-left: 3px solid black;
 	border-right: 3px solid black;
 }
+
+.blink-box {
+	background-color: inherit;
+	animation: blinker 1s linear infinite;
+}
+
+
+@keyframes blinker {
+	50% {
+	  background-color: green;
+	}
+}

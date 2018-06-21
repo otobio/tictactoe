@@ -8,26 +8,33 @@
 
                     <div class="board">
                         <div class="scoreboard">
+                            <div class="well">
+                                <div class="row">
 
+                                    <div class="col-sm-10 col-sm-offset-1">
+                                        <div class="pull-left">
+                                            Player 1 (<span class="" data-bind="text: obsP1Character"></span>)
+                                        </div>
+                                        <div class="pull-right">
+                                             (<span class="" data-bind="text: obsP2Character"></span>) Computer
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
                         </div>
 
                         <div class="playarea">
-                            <div class="trow">
-                                <div class="box"></div>
-                                <div class="box"></div>
-                                <div class="box"></div>
+                            <div class="trow" data-bind="foreach: obsBoxes.slice(0, 3)">
+                                <div class="box" data-bind="text: $data, attr:{index: $index()}, click: $parent.mark"></div>
                             </div>
 
-                            <div class="trow">
-                                <div class="box"></div>
-                                <div class="box"></div>
-                                <div class="box"></div>
+                            <div class="trow" data-bind="foreach: obsBoxes.slice(3, 6)">
+                                <div class="box" data-bind="text: $data, attr:{index: $index() + 3}, click: $parent.mark"></div>
                             </div>
 
-                            <div class="trow">
-                                <div class="box"></div>
-                                <div class="box"></div>
-                                <div class="box"></div>
+                            <div class="trow" data-bind="foreach: obsBoxes.slice(6, 9)">
+                                <div class="box" data-bind="text: $data, attr:{index: $index() + 6}, click: $parent.mark"></div>
                             </div>
                         </div>
                     </div>

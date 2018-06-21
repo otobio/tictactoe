@@ -56,8 +56,8 @@ module.exports = {
             disable: false,
             allChunks: true
         }),
-        new CopyWebpackPlugin([{
-            from: 'src/img'
-        }])
+        // new CopyWebpackPlugin([{
+        //     from: 'src/img'
+        // }])
     ]
 }
