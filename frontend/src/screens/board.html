@@ -3,7 +3,11 @@
         <div class="col-sm-6 col-sm-offset-3">
             <h1>Tic Tac Toe</h1>
             <div class="panel panel-default">
-                <div class="panel-heading"></div>
+                <div class="panel-heading">
+
+                    <button type="button" data-bind="click: newGame" class="btn btn-primary">Restart</button>
+
+                </div>
                 <div class="panel-body">
 
                     <div class="board">
@@ -13,10 +17,13 @@
 
                                     <div class="col-sm-10 col-sm-offset-1">
                                         <div class="pull-left">
-                                            <h3>Player 1 <span class="" data-bind="text: obsP1Character"></span></h3>
+                                            <h3>Player 1
+                                                <span class="" data-bind="text: obsP1Character"></span>
+                                            </h3>
                                         </div>
                                         <div class="pull-right">
-                                             <h3><span class="" data-bind="text: obsP2Character"></span> Computer</h3>
+                                            <h3>
+                                                <span class="" data-bind="text: obsP2Character"></span> Computer</h3>
                                         </div>
                                     </div>
 
@@ -39,7 +46,9 @@
                         </div>
                     </div>
                 </div>
-                <div class="panel-footer"></div>
+                <div class="panel-footer">
+                    <span data-bind="text: obsStatusBar"></span>
+                </div>
             </div>
         </div>
     </div>

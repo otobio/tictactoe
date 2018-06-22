@@ -70,8 +70,6 @@ class Game {
 
     private fakeAjax(options) {
         $.ajax($.extend({}, options, { contentType: 'application/json' })).then(function () { });
-
-        // return;
     }
 
     save() {
@@ -98,6 +96,7 @@ class BoardVM {
 
     obsP1Character: KnockoutObservable<string>;
     obsP2Character: KnockoutObservable<string>;
+    obsStatusBar: KnockoutObservable<string>;
     obsBoxes: KnockoutObservableArray<string>;
     obsScoreBoard: KnockoutObservable<any>;
 
@@ -107,6 +106,7 @@ class BoardVM {
         this.obsBoxes = ko.observableArray(new Array(9));
         this.obsP1Character = ko.observable('*');
         this.obsP2Character = ko.observable('*');
+        this.obsStatusBar = ko.observable('');
 
         this.newGame();
     }
@@ -144,11 +144,12 @@ class BoardVM {
 
     resetBoard() {
         this.obsBoxes(['', '', '', '', '', '', '', '', '']);
+        this.obsStatusBar("Turn: Player 1");
         $('.box').removeClass('blink-box');
     }
 
     computerPlaysAndMark() {
-        this.fakeGetJSON(this.activeGame.endpoint + '/play', (response) => {
+        this.fakeGetJSON(this.activeGame.endpoint + '/play/' + this.activeGame.currentPlayerCharacter(), (response) => {
             if (response.success) {
                 const boxes = this.obsBoxes();
                 boxes[response.place - 1] = this.activeGame.currentPlayerCharacter();
@@ -161,9 +162,10 @@ class BoardVM {
                     $('.box[index=' + matchingBoxes[0] + ']').addClass('blink-box');
                     $('.box[index=' + matchingBoxes[1] + ']').addClass('blink-box');
                     $('.box[index=' + matchingBoxes[2] + ']').addClass('blink-box');
+
+                    this.obsStatusBar("COMPUTER PERSONALITY WINS.");
                 } else {
-                    // Player 1 is next
-                    //
+                    this.obsStatusBar("Turn: Player 1");
                 }
             }
         })
@@ -187,7 +189,10 @@ class BoardVM {
                 $('.box[index=' + matchingBoxes[0] + ']').addClass('blink-box');
                 $('.box[index=' + matchingBoxes[1] + ']').addClass('blink-box');
                 $('.box[index=' + matchingBoxes[2] + ']').addClass('blink-box');
+
+                self.obsStatusBar("PLAYER ONE WINS.");
             } else {
+                self.obsStatusBar("Turn: Computer");
                 self.computerPlaysAndMark();
             }
         }
