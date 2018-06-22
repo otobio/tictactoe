@@ -44,8 +44,8 @@ $app->group('/api', function () {
         $game = $this->gameService->get($id);
         if (isset($game)) {
 
-            $board = array_pop(json_decode($game->gameplay, true));
-            $tttbot = new \Bots\TTTCompuBot($board, $char);
+            $boards = array_values(json_decode($game->gameplay, true));
+            $tttbot = new \Bots\TTTCompuBot(array_pop($boards), $char);
 
             return $response->withJson(['success' => true, 'place' => $tttbot->getPlay() + 1]);
         }

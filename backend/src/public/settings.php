@@ -3,10 +3,12 @@
 require dirname(__DIR__) . '/vendor/autoload.php';
 define('LAZER_DATA_PATH', dirname(dirname(__DIR__)) . '/data/'); //Path to folder with tables
 
-require '../classes/dao/gamedao.php';
+// Use Composer autoload
+require '../c/dao/GameDao.php';
+require '../c/bots/TTTCompuBot.php';
 
-use \Lazer\Classes\Database as Lazer;
 use \Dao\GameDao as GameService;
+use \Lazer\Classes\Database as Lazer;
 
 return [
     'settings' => [

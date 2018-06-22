@@ -6,7 +6,8 @@
     },
     "autoload": {
         "psr-4": {
-            "Dao\\": "classes/dao/"
+            "Dao\\": "c/dao/",
+            "Bot\\": "c/bot/"
         }
     }
 }
