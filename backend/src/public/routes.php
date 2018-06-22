@@ -1,9 +1,10 @@
 <?php
 
+use Ramsey\Uuid\Uuid;
 use \Psr\Http\Message\ResponseInterface as Response;
 use \Psr\Http\Message\ServerRequestInterface as Request;
 
-# No security
+# NOTE: No security
 /**
  * /game - POST inits a game and returns an id
  * /game/{id} - PUT (save) DELETE (delete) GET (retrieve all data)
@@ -13,24 +14,33 @@ use \Psr\Http\Message\ServerRequestInterface as Request;
 
 $app->group('/api', function () {
 
-    $this->post('/game', function (Request $request, Response $response) {
-
+    $this->map(['GET', 'POST'], '/game', function (Request $request, Response $response) {      
+        $uuidv4 = Uuid::uuid4();
+        return $response->withJson(['success' => true, 'gameId' => $uuidv4->toString()]);
     });
 
     $this->post('/game/{id}', function (Request $request, Response $response, $args) {
-
+        # Validate request content type is application/json
+        $data = json_decode($request->getBody(), true);
+        $this->gameService->save($args['id'], $data['playersAndCharacters'], $data['gameplay']);
+        return $response->withJson(['success' => true]);
     });
 
     $this->put('/game/{id}', function (Request $request, Response $response, $args) {
-
+        $data = json_decode($request->getContent());
+        $this->gameService->save($args['id'], $data['playersAndCharacters'], $data['gameplay']);
+        return $response->withJson(['success' => true]);
     });
 
     $this->get('/game/{id}', function (Request $request, Response $response, $args) {
-
+        $contents = $this->gameService->get($args['id']);
+        if (!empty($contents)) {
+            return $response->withJson(array('success' => true, 'data' => $contents));
+        }
     });
 
     $this->delete('/game/{id}', function (Request $request, Response $response, $args) {
-
+        $this->gameService->remove($args['id']);
     });
 
     $this->get('/game/{id}/play', function (Request $request, Response $response, $args) {

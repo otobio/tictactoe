@@ -30,7 +30,7 @@ class Game {
     gameplay: Array<string[]>;
 
     constructor(endpoint: string, gameId: string, ...players) {
-        this.endpoint = endpoint + '/' + gameId;
+        this.endpoint = endpoint + 'game/' + gameId;
         this.id = gameId;
         this.next = 1;
         this.players = [];
@@ -48,7 +48,6 @@ class Game {
     }
 
     savePlay(squares: string[]) {
-        console.log(squares);
         this.gameplay.push(squares);
 
         if (this.next + 1 > Object.keys(this.playersAndCharacters).length) {
@@ -70,14 +69,15 @@ class Game {
     }
 
     private fakeAjax(options) {
-        return;
-        //return $.ajax(options)
+        $.ajax($.extend({}, options, { contentType: 'application/json' })).then(function () { });
+
+        // return;
     }
 
     save() {
         this.fakeAjax({
             url: this.endpoint,
-            method: this.gameplay.length > 0 ? 'PUT' : 'POST',
+            method: this.gameplay.length > 1 ? 'PUT' : 'POST',
             data: JSON.stringify(this)
         });
     }
@@ -97,7 +97,7 @@ class BoardVM {
     activeGame: Game;
 
     obsP1Character: KnockoutObservable<string>;
-    obsP2Character: KnockoutObservable<string>;    
+    obsP2Character: KnockoutObservable<string>;
     obsBoxes: KnockoutObservableArray<string>;
     obsScoreBoard: KnockoutObservable<any>;
 
@@ -106,7 +106,7 @@ class BoardVM {
         this.endpoint = 'http://localhost:5000/api/';
         this.obsBoxes = ko.observableArray(new Array(9));
         this.obsP1Character = ko.observable('*');
-        this.obsP2Character = ko.observable('*');        
+        this.obsP2Character = ko.observable('*');
 
         this.newGame();
     }
@@ -119,16 +119,20 @@ class BoardVM {
             }
         }
 
-        return cb({
-            success: true,
-            gameId: Date.now(),
-            place: firstEmptyPlace
+        $.ajax({
+            'url': url,
+            'method': 'GET',
+            'dataType': 'json',
+            'contentType': 'application/json'
+        }).then((response) => {
+            if (typeof cb === 'function') {
+                cb(response);
+            }
         });
     }
 
     newGame() {
         this.fakeGetJSON(this.endpoint + 'game', (response) => {
-            console.log("Server response:", response);
             if (response.success) {
                 this.activeGame = new Game(this.endpoint, response.gameId, "Player1", "Computer");
                 this.obsP1Character(this.activeGame.playersAndCharacters["Player1"]);
@@ -139,18 +143,18 @@ class BoardVM {
     }
 
     resetBoard() {
-        this.obsBoxes = ko.observableArray(['', '', '', '', '', '', '', '', '']);
+        this.obsBoxes(['', '', '', '', '', '', '', '', '']);
         $('.box').removeClass('blink-box');
     }
 
     computerPlaysAndMark() {
         this.fakeGetJSON(this.activeGame.endpoint + '/play', (response) => {
-            console.log("server response", response);
             if (response.success) {
-                this.obsBoxes()[response.place - 1] = this.activeGame.currentPlayerCharacter();
-                this.obsBoxes.valueHasMutated();
+                const boxes = this.obsBoxes();
+                boxes[response.place - 1] = this.activeGame.currentPlayerCharacter();
+                this.obsBoxes(boxes);
 
-                this.activeGame.savePlay(this.obsBoxes());
+                this.activeGame.savePlay(boxes);
 
                 const matchingBoxes = this.getMatchingBoxes();
                 if (matchingBoxes.length === 3) {
@@ -170,23 +174,21 @@ class BoardVM {
         const index = $ele.attr('index');
         const self = BoardVM.self;
 
-        if (self.activeGame.whoisNext() !== 'Computer') {
-            self.obsBoxes()[index] = self.activeGame.currentPlayerCharacter();
-            self.obsBoxes.valueHasMutated();
+        if (self.activeGame.whoisNext() !== 'Computer' && self.obsBoxes()[index] === '') {
+            const boxes = self.obsBoxes();
+            boxes[index] = self.activeGame.currentPlayerCharacter();
+            self.obsBoxes(boxes);
 
-            self.activeGame.savePlay(self.obsBoxes());
+            self.activeGame.savePlay(boxes);
 
             const matchingBoxes = self.getMatchingBoxes();
-            console.log(matchingBoxes);
+
             if (matchingBoxes.length === 3) {
                 $('.box[index=' + matchingBoxes[0] + ']').addClass('blink-box');
                 $('.box[index=' + matchingBoxes[1] + ']').addClass('blink-box');
                 $('.box[index=' + matchingBoxes[2] + ']').addClass('blink-box');
             } else {
-                // Computer is next
-                setTimeout(() => {
-                    self.computerPlaysAndMark();
-                }, 1000);
+                self.computerPlaysAndMark();
             }
         }
     }

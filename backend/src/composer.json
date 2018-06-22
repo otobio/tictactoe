@@ -1,11 +1,12 @@
 {
     "require": {
         "slim/slim": "^3.10",
-        "greg0/lazer-database": "^1.1"
+        "greg0/lazer-database": "^1.1",
+        "ramsey/uuid": "^3.7"
     },
     "autoload": {
         "psr-4": {
-            "": "classes/"
+            "Dao\\": "classes/dao/"
         }
     }
 }

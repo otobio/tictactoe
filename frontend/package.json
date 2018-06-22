@@ -13,7 +13,7 @@
   "devDependencies": {
     "@types/bootstrap": "^3.3.32",
     "@types/jquery": "^2.0.34",
-    "@types/knockout": "^3.4.38",
+    "@types/knockout": "^3.4.56",
     "copy-webpack-plugin": "^4.0.1",
     "css-loader": "^0.26.1",
     "expose-loader": "^0.7.1",
